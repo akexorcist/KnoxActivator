@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device-admin>
+
+    <uses-policies>
+        <limit-password />
+
+        <watch-login />
+
+        <reset-password />
+
+        <force-lock />
+
+        <wipe-data />
+
+        <recover-password />
+
+        <expire-password />
+
+        <history-password />
+
+        <allow-attachments />
+
+        <limit-attachments />
+
+        <allow-storagecard />
+
+        <allow-camera />
+
+        <allow-wifi />
+
+        <allow-textmessaging />
+
+        <allow-popimapemail />
+
+        <allow-htmlemail />
+
+        <allow-browser />
+
+        <allow-internetsharing />
+
+        <require-manualsyncroaming />
+
+        <allow-bluetoothmode />
+
+        <min-passwordcomplexchars />
+
+        <max-calendarage />
+
+        <max-emailage />
+
+        <max-emailbodytruncsize />
+
+        <max-htmlemailbodytruncsize />
+
+        <require-signedsmimemessages />
+
+        <require-encryptedsmimemessages />
+
+        <require-signedsmimealgorithm />
+
+        <require-encryptionsmimealgorithm />
+
+        <allow-smimeencryptionalgonegotiation />
+
+        <allow-smimesoftcerts />
+
+        <allow-desktopsync />
+
+        <allow-irda />
+
+        <require-device-encryption />
+
+        <require-storagecard-encryption />
+
+        <encrypted-storage />
+
+        <mdm-application />
+
+        <mdm-bluetooth />
+
+        <mdm-device-inventory />
+
+        <mdm-date-time />
+
+        <mdm-exchange-account />
+
+
+        <mdm-roaming />
+
+        <mdm-wifi />
+
+        <mdm-security />
+
+        <mdm-email-account />
+
+        <mdm-hardware-control />
+
+        <mdm-tethering />
+
+        <mdm-location />
+
+        <mdm-calling />
+
+        <mdm-email />
+
+        <mdm-vpn />
+
+        <mdm-apn-settings />
+
+        <mdm-browser-settings />
+
+        <mdm-phone-restriction />
+
+        <mdm-firewall />
+
+        <mdm-enterprise-vpn />
+
+        <mdm-data-time />
+    </uses-policies>
+
+</device-admin>

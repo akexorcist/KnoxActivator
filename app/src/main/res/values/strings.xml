@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">KNOX Activation Example</string>
+    <string name="auto_activation_description">Auto license and device admin activation will start immediately</string>
+    <string name="lets_do_something_with_knox_standard_sdk">Let\'s do something with Samsung KNOX Standard SDK</string>
+    <string name="device_admin_cancelled_title">Setup Problem</string>
+    <string name="device_admin_cancelled_content">Device Administrator is required to enable. Please enable it to use this app.</string>
+    <string name="license_failed_title">License Activation Problem</string>
+    <string name="license_failed_content" formatted="false">Something wrong while license activation.\n Code : %s (%d)</string>
+    <string name="device_unsupported_title">Device Problem</string>
+    <string name="device_unsupported_content">This device isn\'t support by KNOX Standard SDK.</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="ok">OK</string>
+    <string name="device_admin_activation_success">Device admin activation success</string>
+    <string name="license_activation_success">KNOX license activation success</string>
+    <string name="license_activation_loading_title">License Activating</string>
+    <string name="license_activation_loading_content">Loading…</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/default_margin_padding_large"
+    android:paddingLeft="@dimen/default_margin_padding_large"
+    android:paddingRight="@dimen/default_margin_padding_large"
+    android:paddingTop="@dimen/default_margin_padding_large"
+    tools:context="com.akexorcist.knoxactivator.sample.DoSomethingActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin_padding_large"
+        android:text="@string/lets_do_something_with_knox_standard_sdk"
+        android:textSize="@dimen/default_text_size" />
+
+</RelativeLayout>
