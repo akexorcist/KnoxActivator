@@ -7,7 +7,7 @@
     <string name="license_failed_title">License Activation Problem</string>
     <string name="license_failed_content" formatted="false">Something wrong while license activation.\n Code : %s (%d)</string>
     <string name="device_unsupported_title">Device Problem</string>
-    <string name="device_unsupported_content">This device isn\'t support by KNOX Standard SDK.</string>
+    <string name="device_unsupported_content">This device doesn\'t support by KNOX Standard SDK.</string>
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
     <string name="ok">OK</string>

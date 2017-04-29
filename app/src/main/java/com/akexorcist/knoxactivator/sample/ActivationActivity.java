@@ -27,18 +27,21 @@ public class ActivationActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        // Register activator manager callback
         KnoxActivationManager.getInstance().register(activationCallback);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // Unregister activator manager callback
         KnoxActivationManager.getInstance().unregister();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Handle activity result from Knox automatically
         KnoxActivationManager.getInstance().onActivityResult(requestCode, resultCode, data);
     }
 
@@ -63,7 +66,7 @@ public class ActivationActivity extends AppCompatActivity {
             hideLoadingDialog();
             saveLicenseActivationStateToSharedPreference();
             showLicenseActivationSuccess();
-            goToRestrictionActivity();
+            goToDoSomethingActivity();
         }
 
         @Override
@@ -92,7 +95,7 @@ public class ActivationActivity extends AppCompatActivity {
     private void activateKnoxLicense() {
         if (SharedPreferenceManager.isLicenseActivated(this)) {
             showLicenseActivationSuccess();
-            goToRestrictionActivity();
+            goToDoSomethingActivity();
         } else {
             showLoadingDialog();
             KnoxActivationManager.getInstance().activateLicense(this, LICENSE_KEY);
@@ -108,7 +111,7 @@ public class ActivationActivity extends AppCompatActivity {
         SharedPreferenceManager.setLicenseActivated(this);
     }
 
-    private void goToRestrictionActivity() {
+    private void goToDoSomethingActivity() {
         startActivity(new Intent(this, DoSomethingActivity.class));
         finish();
     }
