@@ -27,24 +27,25 @@ public class ActivationActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Register activator manager callback
-        KnoxActivationManager.getInstance().register(activationCallback);
+        // TODO Register Knox activation manager with existing callback (at line 49)
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Unregister activator manager callback
-        KnoxActivationManager.getInstance().unregister();
+        // TODO Unregister Knox activation manager
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Handle activity result from Knox automatically
-        KnoxActivationManager.getInstance().onActivityResult(requestCode, resultCode, data);
+        // TODO Handle activity result from Knox activation manager
+
     }
 
+    // Knox activation manager callback
     private ActivationCallback activationCallback = new ActivationCallback() {
         @Override
         public void onDeviceAdminActivated() {
@@ -77,7 +78,9 @@ public class ActivationActivity extends AppCompatActivity {
     };
 
     private void checkKnoxSdkSupported() {
-        if (KnoxActivationManager.getInstance().isKnoxSdkSupported(this)) {
+        // TODO Fix below line, call Knox activation manager method to check the Knox sdk supporting
+        boolean isKnoxSdkSupported = false;
+        if (isKnoxSdkSupported) {
             activateDeviceAdmin();
         } else {
             showDeviceUnsupportedProblem();
@@ -85,7 +88,9 @@ public class ActivationActivity extends AppCompatActivity {
     }
 
     private void activateDeviceAdmin() {
-        if (KnoxActivationManager.getInstance().isDeviceAdminActivated(this)) {
+        // TODO Fix below line, call Knox activation manager method to check the device administration activation
+        boolean isDeviceAdminActivated = false;
+        if (isDeviceAdminActivated) {
             setDeviceAdminActivated();
         } else {
             KnoxActivationManager.getInstance().activateDeviceAdmin(this);
@@ -93,6 +98,7 @@ public class ActivationActivity extends AppCompatActivity {
     }
 
     private void activateKnoxLicense() {
+        // Restore license activation state from shared preference (Bypass)
         if (SharedPreferenceManager.isLicenseActivated(this)) {
             showLicenseActivationSuccess();
             goToDoSomethingActivity();
