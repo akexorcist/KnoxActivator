@@ -77,6 +77,7 @@ public class ActivationActivity extends AppCompatActivity {
     };
 
     private void checkKnoxSdkSupported() {
+        // Check Knox sdk supporting
         if (KnoxActivationManager.getInstance().isKnoxSdkSupported(this)) {
             activateDeviceAdmin();
         } else {
@@ -85,6 +86,7 @@ public class ActivationActivity extends AppCompatActivity {
     }
 
     private void activateDeviceAdmin() {
+        // Check device administration activation state
         if (KnoxActivationManager.getInstance().isDeviceAdminActivated(this)) {
             setDeviceAdminActivated();
         } else {
@@ -93,6 +95,7 @@ public class ActivationActivity extends AppCompatActivity {
     }
 
     private void activateKnoxLicense() {
+        // Restore license activation state from shared preference (Bypass)
         if (SharedPreferenceManager.isLicenseActivated(this)) {
             showLicenseActivationSuccess();
             goToDoSomethingActivity();
