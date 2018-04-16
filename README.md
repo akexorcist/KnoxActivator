@@ -9,13 +9,13 @@ Maven
 <dependency>
   <groupId>com.akexorcist</groupId>
   <artifactId>knoxactivator</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
 Gradle
 ```groovy
-implementation 'com.akexorcist:knoxactivator:1.0.0'
+implementation 'com.akexorcist:knoxactivator:1.0.1'
 ```
 
 Public Method
