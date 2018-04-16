@@ -40,7 +40,7 @@ boolean isMdmApiSupported(Context context, EnterpriseDeviceManager.EnterpriseSdk
 Usage
 ===============================
 
-###Setup
+### Setup
 Required methods in Activity class for Knox Standard activation
 ```java
 public class YourActivity extends AppCompatActivity {
@@ -67,7 +67,7 @@ public class YourActivity extends AppCompatActivity {
 }
 ```
 
-###Activate & Deactivate method
+### Activate & Deactivate method
 ```java
 // Device Administrator
 KnoxActivationManager.getInstance().activateDeviceAdmin(getActivity());
@@ -80,7 +80,7 @@ KnoxActivationManager.getInstance().activateLicense(getContext(), licenseKey);
 How to get the ELM key?
 https://seap.samsung.com/license-keys/create/knox-android
 
-###Status checking method
+### Status checking method
 Utility methods 
 ```java
 KnoxActivationManager manager = KnoxActivationManager.getInstance();
@@ -96,7 +96,7 @@ EnterpriseDeviceManager.EnterpriseSdkVersion sdkVersion = EnterpriseDeviceManage
 boolean isMdmApiSupported = manager.isMdmApiSupported(getContext(), sdkVersion);
 ```
 
-###ActivationCallback
+### ActivationCallback
 Callback when activate/deactivate method called
 ```java
 ActivationCallback activationCallback = new ActivationCallback() {
