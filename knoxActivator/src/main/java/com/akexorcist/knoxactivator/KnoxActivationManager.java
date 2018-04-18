@@ -2,24 +2,24 @@ package com.akexorcist.knoxactivator;
 
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
-import android.app.enterprise.EnterpriseDeviceManager;
-import android.app.enterprise.license.EnterpriseLicenseManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
+import android.content.IntentFilter;
 
-import com.akexorcist.knoxactivator.event.AdminDeactivatedEvent;
-import com.akexorcist.knoxactivator.event.LicenseActivatedEvent;
-import com.akexorcist.knoxactivator.event.LicenseActivationFailedEvent;
-import com.akexorcist.knoxactivator.receiver.AdminActivationReceiver;
-import com.squareup.otto.Subscribe;
+import com.akexorcist.knoxactivator.receiver.KnoxDeviceAdminReceiver;
+import com.akexorcist.knoxactivator.receiver.KnoxLicenseReceiver;
+import com.samsung.android.knox.EnterpriseDeviceManager;
+import com.samsung.android.knox.license.EnterpriseLicenseManager;
+import com.samsung.android.knox.license.KnoxEnterpriseLicenseManager;
 
 /**
  * Created by Akexorcist on 4/20/2016 AD.
  */
+
+@SuppressWarnings("unused")
 public class KnoxActivationManager {
-    private static final long EVENT_LISTENER_DELAY = 500;
+    @SuppressWarnings("WeakerAccess")
     public static final int REQUEST_CODE_KNOX = 4545;
 
     private static KnoxActivationManager knoxActivationManager;
@@ -33,103 +33,128 @@ public class KnoxActivationManager {
 
     private ActivationCallback activationCallback;
 
-    public void register(ActivationCallback callback) {
-        activationCallback = callback;
-        KnoxActivationBus.getInstance().getBus().register(this);
+    public void register(Context context, ActivationCallback callback) {
+        this.activationCallback = callback;
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(EnterpriseLicenseManager.ACTION_LICENSE_STATUS);
+        intentFilter.addAction(KnoxLicenseReceiver.ACTION_ELM_LICENSE_STATUS);
+        intentFilter.addAction(KnoxLicenseReceiver.ACTION_KLM_LICENSE_STATUS);
+        context.registerReceiver(knoxLicenseReceiver, intentFilter);
     }
 
-    public void unregister() {
+    public void unregister(Context context) {
         activationCallback = null;
-        KnoxActivationBus.getInstance().getBus().unregister(this);
+        context.unregisterReceiver(knoxLicenseReceiver);
+    }
+
+    @SuppressWarnings("unused")
+    public void onActivityResult(int requestCode, final int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_KNOX) {
+            if (activationCallback != null) {
+                if (resultCode == Activity.RESULT_OK) {
+                    activationCallback.onDeviceAdminActivated();
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    activationCallback.onDeviceAdminActivationCancelled();
+                }
+            }
+        }
+    }
+
+    public void activateDeviceAdmin(Activity activity, String description) {
+        ComponentName componentName = new ComponentName(activity, KnoxDeviceAdminReceiver.class);
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+        if (description != null) {
+            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, description);
+        }
+        activity.startActivityForResult(intent, REQUEST_CODE_KNOX);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean deactivateDeviceAdmin(Context context) {
+        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        if (devicePolicyManager != null) {
+            ComponentName componentName = new ComponentName(context, KnoxDeviceAdminReceiver.class);
+            devicePolicyManager.removeActiveAdmin(componentName);
+            return true;
+        }
+        return false;
+    }
+
+    public void activateKnoxLicense(Context context, String licenseKey) {
+        KnoxEnterpriseLicenseManager knoxEnterpriseLicenseManager = KnoxEnterpriseLicenseManager.getInstance(context);
+        knoxEnterpriseLicenseManager.activateLicense(licenseKey);
+    }
+
+    public void deactivateKnoxLicense(Context context, String licenseKey) {
+        KnoxEnterpriseLicenseManager knoxEnterpriseLicenseManager = KnoxEnterpriseLicenseManager.getInstance(context);
+        knoxEnterpriseLicenseManager.deActivateLicense(licenseKey);
+    }
+
+    public void activateBackwardLicense(Context context, String licenseKey) {
+        EnterpriseLicenseManager enterpriseLicenseManager = EnterpriseLicenseManager.getInstance(context);
+        enterpriseLicenseManager.activateLicense(licenseKey);
     }
 
     public boolean isDeviceAdminActivated(Context context) {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName componentName = new ComponentName(context, AdminActivationReceiver.class);
-        return devicePolicyManager.isAdminActive(componentName);
+        ComponentName componentName = new ComponentName(context, KnoxDeviceAdminReceiver.class);
+        return devicePolicyManager != null && devicePolicyManager.isAdminActive(componentName);
     }
 
-    @Subscribe
-    public void onDeviceAdminDeactivated(AdminDeactivatedEvent event) {
-        if (activationCallback != null) {
-            activationCallback.onDeviceAdminDeactivated();
-        }
-    }
-
-    @Subscribe
-    public void onLicenseActivated(LicenseActivatedEvent event) {
-        if (activationCallback != null) {
-            activationCallback.onLicenseActivated();
-        }
-    }
-
-    @Subscribe
-    public void onLicenseActivationFailed(LicenseActivationFailedEvent event) {
-        if (activationCallback != null) {
-            int errorType = event.getErrorType();
-            activationCallback.onLicenseActivateFailed(errorType, getErrorMessage(errorType));
-        }
-    }
-
-    @SuppressWarnings({"WrongConstant", "TryWithIdenticalCatches"})
-    public boolean isKnoxSdkSupported(Context context) {
+    public boolean isKnoxSdkSupported() {
         try {
-            EnterpriseDeviceManager enterpriseDeviceManager = (EnterpriseDeviceManager) context.getSystemService(EnterpriseDeviceManager.ENTERPRISE_POLICY_SERVICE);
-            enterpriseDeviceManager.getEnterpriseSdkVer();
+            EnterpriseDeviceManager.getAPILevel();
             return true;
-        } catch (NoSuchMethodError e) {
-            e.printStackTrace();
-        } catch (NoClassDefFoundError e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    @SuppressWarnings("WrongConstant")
-    public boolean isMdmApiSupported(Context context, EnterpriseDeviceManager.EnterpriseSdkVersion requiredVersion) {
-        EnterpriseDeviceManager enterpriseDeviceManager = (EnterpriseDeviceManager) context.getSystemService(EnterpriseDeviceManager.ENTERPRISE_POLICY_SERVICE);
-        return !(requiredVersion != null && enterpriseDeviceManager.getEnterpriseSdkVer().ordinal() < requiredVersion.ordinal());
-    }
-
-    public void activateLicense(Context context, String licenseKey) {
-        EnterpriseLicenseManager enterpriseLicenseManager = EnterpriseLicenseManager.getInstance(context);
-        enterpriseLicenseManager.activateLicense(licenseKey, context.getPackageName());
-    }
-
-    public void activateDeviceAdmin(Activity activity) {
-        ComponentName componentName = new ComponentName(activity, AdminActivationReceiver.class);
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-        activity.startActivityForResult(intent, REQUEST_CODE_KNOX);
-    }
-
-    public void deactivateDeviceAdmin(Context context) {
-        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName componentName = new ComponentName(context, AdminActivationReceiver.class);
-        devicePolicyManager.removeActiveAdmin(componentName);
-    }
-
-    public void onActivityResult(int requestCode, final int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_KNOX) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (activationCallback != null) {
-                        if (resultCode == Activity.RESULT_OK) {
-                            activationCallback.onDeviceAdminActivated();
-                        } else if (resultCode == Activity.RESULT_CANCELED) {
-                            activationCallback.onDeviceAdminActivationCancelled();
-                        }
-                    }
-                }
-            }, EVENT_LISTENER_DELAY);
+    public boolean isMdmApiSupported(int requiredVersion) {
+        try {
+            return EnterpriseDeviceManager.getAPILevel() < requiredVersion;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
-    public String getErrorMessage(int errorType) {
-        switch (errorType) {
+    public boolean isLegacySdk() {
+        try {
+            return EnterpriseDeviceManager.getAPILevel() < EnterpriseDeviceManager.KNOX_VERSION_CODES.KNOX_2_8;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private KnoxLicenseReceiver knoxLicenseReceiver = new KnoxLicenseReceiver() {
+        @Override
+        public void onKnoxLicenseActivated(Context context) {
+            if (activationCallback != null) {
+                activationCallback.onKnoxLicenseActivated();
+            }
+        }
+
+        @Override
+        public void onBackwardLicenseActivated(Context context) {
+            if (activationCallback != null) {
+                activationCallback.onBackwardLicenseActivated();
+            }
+        }
+
+        @Override
+        public void onLicenseActivationFailed(Context context, int errorCode) {
+            if (activationCallback != null) {
+                activationCallback.onLicenseActivateFailed(errorCode, getErrorMessage(errorCode));
+            }
+        }
+    };
+
+    private String getErrorMessage(int errorCode) {
+        switch (errorCode) {
             case EnterpriseLicenseManager.ERROR_INTERNAL:
                 return "ERROR_INTERNAL";
             case EnterpriseLicenseManager.ERROR_INTERNAL_SERVER:
@@ -144,14 +169,16 @@ public class KnoxActivationManager {
                 return "ERROR_NETWORK_DISCONNECTED";
             case EnterpriseLicenseManager.ERROR_NETWORK_GENERAL:
                 return "ERROR_NETWORK_GENERAL";
-            case EnterpriseLicenseManager.ERROR_NO_MORE_REGISTRATION:
-                return "ERROR_NO_MORE_REGISTRATION";
             case EnterpriseLicenseManager.ERROR_NOT_CURRENT_DATE:
                 return "ERROR_NOT_CURRENT_DATE";
             case EnterpriseLicenseManager.ERROR_NULL_PARAMS:
                 return "ERROR_NULL_PARAMS";
+            case EnterpriseLicenseManager.ERROR_SIGNATURE_MISMATCH:
+                return "ERROR_SIGNATURE_MISMATCH";
             case EnterpriseLicenseManager.ERROR_USER_DISAGREES_LICENSE_AGREEMENT:
                 return "ERROR_USER_DISAGREES_LICENSE_AGREEMENT";
+            case EnterpriseLicenseManager.ERROR_VERSION_CODE_MISMATCH:
+                return "ERROR_VERSION_CODE_MISMATCH";
             case EnterpriseLicenseManager.ERROR_UNKNOWN:
             default:
                 return "ERROR_UNKNOWN";

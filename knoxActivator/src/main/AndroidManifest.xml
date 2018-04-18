@@ -1,29 +1,52 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.akexorcist.knoxactivator">
 
-    <uses-permission android:name="android.permission.sec.MDM_APP_MGMT" />
-
     <application>
         <receiver
-            android:name=".receiver.AdminActivationReceiver"
+            android:name=".receiver.KnoxDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/enterprise_device_admin" />
-
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".receiver.LicenseActivationReceiver">
+        <receiver android:name="com.samsung.android.knox.IntentConverterReceiver" >
             <intent-filter>
+                <action android:name="edm.intent.application.action.prevent.start" />
+                <action android:name="edm.intent.application.action.prevent.stop" />
+                <action android:name="edm.intent.action.ldap.createacct.result" />
+                <action android:name="edm.intent.action.device.inside" />
+                <action android:name="edm.intent.action.device.outside" />
+                <action android:name="edm.intent.action.device.location.unavailable" />
+                <action android:name="com.samsung.edm.intent.action.CERTIFICATE_REMOVED" />
+                <action android:name="edm.intent.certificate.action.certificate.failure" />
+                <action android:name="com.samsung.edm.intent.action.APPLICATION_FOCUS_CHANGE" />
+                <action android:name="edm.intent.action.EMAIL_ACCOUNT_ADD_RESULT" />
+                <action android:name="edm.intent.action.EMAIL_ACCOUNT_DELETE_RESULT" />
+                <action android:name="com.sec.enterprise.intent.action.BLOCKED_DOMAIN" />
+                <action android:name="com.sec.enterprise.intent.action.UPDATE_FOTA_VERSION_RESULT" />
+                <action android:name="com.samsung.edm.intent.action.EXCHANGE_CBA_INSTALL_STATUS" />
+                <action android:name="android.intent.action.sec.CBA_INSTALL_STATUS" />
+                <action android:name="edm.intent.action.EXCHANGE_ACCOUNT_ADD_RESULT" />
+                <action android:name="edm.intent.action.EXCHANGE_ACCOUNT_DELETE_RESULT" />
+                <action android:name="com.samsung.edm.intent.action.ENFORCE_SMIME_ALIAS_RESULT" />
+                <action android:name="edm.intent.action.knox_license.status" />
                 <action android:name="edm.intent.action.license.status" />
+                <action android:name="com.samsung.edm.intent.event.NTP_SERVER_UNREACHABLE" />
+                <action android:name="edm.intent.action.enable.kiosk.mode.result" />
+                <action android:name="edm.intent.action.disable.kiosk.mode.result" />
+                <action android:name="edm.intent.action.unexpected.kiosk.behavior" />
+                <action android:name="com.samsung.edm.intent.action.SIM_CARD_CHANGED" />
+                <action android:name="android.intent.action.sec.SIM_CARD_CHANGED" />
+                <action android:name="com.samsung.action.knox.certenroll.CEP_CERT_ENROLL_STATUS" />
+                <action android:name="com.samsung.action.knox.certenroll.CEP_SERVICE_DISCONNECTED" />
+                <action android:name="com.sec.enterprise.knox.intent.action.KNOX_ATTESTATION_RESULT" />
+                <action android:name="com.sec.action.NO_USER_ACTIVITY" />
+                <action android:name="com.sec.action.USER_ACTIVITY" />
+                <action android:name="com.samsung.android.mdm.VPN_BIND_RESULT" />
             </intent-filter>
         </receiver>
-
     </application>
-
 </manifest>

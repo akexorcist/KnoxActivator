@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-dontwarn com.samsung.**
+-keep class com.samsung.** { *; }
+-keep interface com.samsung.** { *; }
+-keep enum com.samsung.** { *; }
+-keepclassmembers class com.samsung.** { *; }

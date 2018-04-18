@@ -5,16 +5,10 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 27
-        versionCode 10001
-        versionName "1.0.1"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        versionCode 20001
+        versionName "2.0.1"
     }
     sourceSets {
         main {
@@ -26,10 +20,8 @@ android {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    implementation 'com.squareup:otto:1.3.8'
-    api files('libs/edm.jar')
-    api files('libs/license.jar')
-    api files('libs/rc.jar')
+    compileOnly files('libs/knoxsdk.jar')
+    runtimeOnly files('libs/supportlib.jar')
 }
 
 apply from: '../maven_push.gradle'

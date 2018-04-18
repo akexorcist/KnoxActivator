@@ -12,9 +12,6 @@ import com.akexorcist.knoxactivator.sample.manager.SharedPreferenceManager;
 import com.akexorcist.knoxactivator.sample.manager.ToastManager;
 
 public class ActivationActivity extends AppCompatActivity {
-    // TODO Put your ELM key here
-    private final String LICENSE_KEY = "YOUR_ELM_KEY";
-
     private Dialog dialogLoading;
 
     @Override
@@ -22,20 +19,14 @@ public class ActivationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activation);
         checkKnoxSdkSupported();
+        KnoxActivationManager.getInstance().register(this, activationCallback);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // Register activator manager callback
-        KnoxActivationManager.getInstance().register(activationCallback);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         // Unregister activator manager callback
-        KnoxActivationManager.getInstance().unregister();
+        KnoxActivationManager.getInstance().unregister(this);
     }
 
     @Override
@@ -57,16 +48,19 @@ public class ActivationActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onDeviceAdminDeactivated() {
-
+        public void onKnoxLicenseActivated() {
+            saveKnoxLicenseActivationStateToSharedPreference();
+            if (KnoxActivationManager.getInstance().isLegacySdk()) {
+                activateBackwardLicense();
+            } else {
+                setLicenseActivationSuccess();
+            }
         }
 
         @Override
-        public void onLicenseActivated() {
-            hideLoadingDialog();
-            saveLicenseActivationStateToSharedPreference();
-            showLicenseActivationSuccess();
-            goToDoSomethingActivity();
+        public void onBackwardLicenseActivated() {
+            saveBackwardLicenseActivationStateToSharedPreference();
+            setLicenseActivationSuccess();
         }
 
         @Override
@@ -77,7 +71,7 @@ public class ActivationActivity extends AppCompatActivity {
     };
 
     private void checkKnoxSdkSupported() {
-        if (KnoxActivationManager.getInstance().isKnoxSdkSupported(this)) {
+        if (KnoxActivationManager.getInstance().isKnoxSdkSupported()) {
             activateDeviceAdmin();
         } else {
             showDeviceUnsupportedProblem();
@@ -88,17 +82,24 @@ public class ActivationActivity extends AppCompatActivity {
         if (KnoxActivationManager.getInstance().isDeviceAdminActivated(this)) {
             setDeviceAdminActivated();
         } else {
-            KnoxActivationManager.getInstance().activateDeviceAdmin(this);
+            KnoxActivationManager.getInstance().activateDeviceAdmin(this, null);
         }
     }
 
     private void activateKnoxLicense() {
-        if (SharedPreferenceManager.isLicenseActivated(this)) {
-            showLicenseActivationSuccess();
-            goToDoSomethingActivity();
+        showLoadingDialog();
+        if (SharedPreferenceManager.isKnoxLicenseActivated(this)) {
+            activationCallback.onKnoxLicenseActivated();
         } else {
-            showLoadingDialog();
-            KnoxActivationManager.getInstance().activateLicense(this, LICENSE_KEY);
+            KnoxActivationManager.getInstance().activateKnoxLicense(this, LicenseKey.KNOX_LICENSE_KEY);
+        }
+    }
+
+    private void activateBackwardLicense() {
+        if (SharedPreferenceManager.isBackwardLicenseActivated(this)) {
+            activationCallback.onBackwardLicenseActivated();
+        } else {
+            KnoxActivationManager.getInstance().activateBackwardLicense(this, LicenseKey.BACKWARD_LICENSE_KEY);
         }
     }
 
@@ -107,8 +108,18 @@ public class ActivationActivity extends AppCompatActivity {
         activateKnoxLicense();
     }
 
-    private void saveLicenseActivationStateToSharedPreference() {
-        SharedPreferenceManager.setLicenseActivated(this);
+    private void setLicenseActivationSuccess() {
+        hideLoadingDialog();
+        showLicenseActivationSuccess();
+        goToDoSomethingActivity();
+    }
+
+    private void saveKnoxLicenseActivationStateToSharedPreference() {
+        SharedPreferenceManager.setKnoxLicenseActivated(this);
+    }
+
+    private void saveBackwardLicenseActivationStateToSharedPreference() {
+        SharedPreferenceManager.setBackwardLicenseActivated(this);
     }
 
     private void goToDoSomethingActivity() {

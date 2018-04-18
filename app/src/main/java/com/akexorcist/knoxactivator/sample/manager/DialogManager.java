@@ -2,64 +2,63 @@ package com.akexorcist.knoxactivator.sample.manager;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.View;
+import android.support.annotation.NonNull;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.akexorcist.knoxactivator.sample.R;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 /**
  * Created by Akexorcist on 4/22/2016 AD.
  */
 public class DialogManager {
     public static Dialog showLicenseActivationLoading(Context context) {
-        return new LovelyProgressDialog(context)
-                .setTitle(R.string.license_activation_loading_title)
-                .setMessage(R.string.license_activation_loading_content)
-                .setTopColorRes(R.color.primary)
+        return new MaterialDialog.Builder(context)
+                .title(R.string.license_activation_loading_title)
+                .content(R.string.license_activation_loading_content)
+                .progress(true, 0)
+                .cancelable(false)
                 .show();
     }
 
     public static void showDialog(Context context, String title, String content, String positive, String negative, final OnDialogClickListener listener) {
-        new LovelyStandardDialog(context)
-                .setTitle(title)
-                .setMessage(content)
-                .setPositiveButton(positive, new View.OnClickListener() {
+        new MaterialDialog.Builder(context)
+                .title(title)
+                .content(content)
+                .positiveText(positive)
+                .negativeText(negative)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (listener != null) {
                             listener.onPositiveClick();
                         }
                     }
                 })
-                .setNegativeButton(negative, new View.OnClickListener() {
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (listener != null) {
                             listener.onNegativeClick();
                         }
                     }
                 })
-                .setNegativeButtonColorRes(R.color.gray)
-                .setPositiveButtonColorRes(R.color.accent)
-                .setTopColorRes(R.color.primary)
                 .show();
     }
 
     public static void showDeviceUnsupportedProblem(Context context, final OnDialogClickListener listener) {
-        new LovelyStandardDialog(context)
-                .setTitle(R.string.device_unsupported_title)
-                .setMessage(R.string.device_unsupported_content)
-                .setNeutralButton(R.string.ok, new View.OnClickListener() {
+        new MaterialDialog.Builder(context)
+                .title(R.string.device_unsupported_title)
+                .content(R.string.device_unsupported_content)
+                .neutralText(R.string.ok)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         if (listener != null) {
                             listener.onNeutralClick();
                         }
                     }
                 })
-                .setNeutralButtonColorRes(R.color.accent)
-                .setTopColorRes(R.color.primary)
                 .show();
     }
 
