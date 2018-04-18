@@ -1,5 +1,6 @@
 # Android-KnoxActivator
-Samsung's Knox Standard activation helper library for Android
+Samsung's Knox Standard activation helper library for Android.
+
 [What's Samsung Knox SDK?](https://seap.samsung.com/license-keys/create/knox-android)
 
 What's new in v2.0.1
@@ -157,12 +158,19 @@ ActivationCallback activationCallback = new ActivationCallback() {
 Migrate from v1 to v2
 ===========================
 • Change `register()` to `register(Context context)`  
+
 • Move register method from `onStart()` to `onCreate(Bundle savedInstanceState)`
+
 • Change `unregister()` to `unregister(Context context)`
+
 • Move unregister method from `onStop()` to `onDestroy()`
+
 • Change `activeDeviceAdmin(Activity activity)` to `activateDeviceAdmin(Activity activity, String description)`. The description message will display on Device Administration request screen.
+
 • For SDK v2.8 or higher only : Change `activateLicense(Context context, String licenseKey)` to `activateKnoxLicense(Context context, String licenseKey)` with Knox SDK license key
+
 • For all SDK version support : You need to activate the both Knox license and backward-compatible license. Activate the Knox license with `activateKnoxLicense(Context context, String licenseKey)` by Knox SDK license key, then active the backward-compatible license key with `activateBackwardLicense(Context context, String licenseKey)` by backward-compatible license kry.
+
 • No Knox policy required in XML resource anymore. You have to declare as Knox SDK permission with `<uses-permission ... />` in your AndroidManifest.xml. [More detail](https://seap.samsung.com/license-keys/manifest-knox-permissions) 
 
 
